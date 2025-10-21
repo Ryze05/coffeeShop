@@ -1,9 +1,11 @@
 package com.example.coffeeshops
 
+import Comments
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,23 +14,29 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -40,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -48,16 +57,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.example.coffeeshops.ui.theme.CoffeeShopsTheme
-import com.example.coffeeshops.ui.theme.Comments
 import kotlin.math.floor
 
 val courgetteFontFamily = FontFamily(
     Font(R.font.aliviaregular, FontWeight.Normal)
 )
+
+data class CoffeeShop(val nombre: String, val direccion: String, @DrawableRes var photo: Int)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +83,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = "Main",
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        composable("Main") { CoffeeMain() }
+                        composable("Main") { CoffeeMain(navController) }
                         composable("Comments") { Comments() }
                     }
                 }
@@ -82,42 +93,98 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun CoffeeMain() {
+fun CoffeeMain(navController: NavController) {
     var starsSelected by remember { mutableStateOf(0.0) }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(14.dp)) {
-        Image(
-            painter = painterResource(id = R.drawable.images),
-            contentDescription = "Camera image",
-            modifier = Modifier
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop
-        )
+    val coffeeShops = listOf(
+        CoffeeShop("Antico Caffè Greco", "St. Italy, Rome", R.drawable.images),
+        CoffeeShop("Coffee Room", "St. Germany, Berlin", R.drawable.images1),
+        CoffeeShop("Coffee Ibiza", "St. Colon, Madrid", R.drawable.images2),
+        CoffeeShop("Pudding Coffee Shop", "St. Diagonal, Barcelona", R.drawable.images3),
+        CoffeeShop("L'Express", "St. Picadilly Circus, London", R.drawable.images4),
+        CoffeeShop("Coffee Corner", "St. Àngel Guimerà, Valencia", R.drawable.images5),
+        CoffeeShop("Sweet Cup", "St. Kinkerstraat, Amsterdam", R.drawable.images6)
+    )
 
-        Spacer(modifier = Modifier.size(10.dp))
 
-        Text(
-            text = "Antico Calle Greco",
-            fontFamily = courgetteFontFamily
-        )
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(14.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp) // Espacio entre items
+    ) {
+        items(coffeeShops) { shop ->
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFfbe3e3),
+                ),
+                modifier = Modifier
+                    .clickable{
+                        navController.navigate("Comments")
+                    }
+            ) {
+                Column {
+                    Image(
+                        painter = painterResource(id = shop.photo),
+                        contentDescription = "Camera image",
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Crop
+                    )
 
-        Spacer(modifier = Modifier.size(10.dp))
+                    Spacer(modifier = Modifier.size(10.dp))
 
-        RatingBar(rating = starsSelected, onItemSelected = { newValue -> starsSelected = newValue })
+                    Text(
+                        text = shop.nombre,
+                        fontFamily = courgetteFontFamily,
+                        modifier = Modifier.padding(horizontal = 14.dp)
+                    )
+
+                    Spacer(modifier = Modifier.size(10.dp))
+
+                    RatingBar(
+                        rating = starsSelected,
+                        onItemSelected = { newValue -> starsSelected = newValue })
+
+                    Spacer(modifier = Modifier.size(10.dp))
+
+                    Text(
+                        text = shop.direccion,
+                        modifier = Modifier.padding(horizontal = 14.dp)
+                    )
+
+                    Spacer(modifier = Modifier.size(7.dp))
+
+                    HorizontalDivider(
+                        color = Color.Gray,
+                        thickness = 1.dp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.size(7.dp))
+
+                    TextButton(onClick = {}) {
+                        Text(
+                            text = "RESERVE",
+                            color = Color(0xFFe57d90)
+                        )
+                    }
+                }
+            }
+        }
     }
-
-
 }
 
 @Composable
 fun RatingBar(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.padding(horizontal = 14.dp),
     rating: Double = 0.0,
     stars: Int = 5,
     starsColor: Color = Color(0xFF888888),
     onItemSelected: (Double) -> Unit
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 14.dp)) {
         for (i in 1..stars) {
             val icon = if (i <= floor(rating).toInt()) {
                 Icons.Filled.Star
@@ -148,22 +215,30 @@ fun TopBar() {
             Text("CoffeeShops")
         },
         navigationIcon = {
-            IconButton(onClick = { /* do something */ }) {
+            IconButton(onClick = {}) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "Localized description"
+                    contentDescription = "Menu",
+                    tint = Color.White
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = {}) {
+                Icon(
+                    imageVector = Icons.Filled.MoreVert,
+                    contentDescription = "More options",
+                    tint = Color.White
                 )
             }
         }
     )
-
-
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     CoffeeShopsTheme {
         CoffeeMain()
     }
-}
+}*/
