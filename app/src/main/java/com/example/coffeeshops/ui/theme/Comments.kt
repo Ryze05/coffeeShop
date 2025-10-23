@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
@@ -22,13 +24,14 @@ import androidx.compose.ui.unit.sp
 import com.example.coffeeshops.R
 import com.example.coffeeshops.courgetteFontFamily
 import com.example.coffeeshops.ui.theme.CoffeeShopsTheme
+import kotlinx.coroutines.launch
 
 val courgetteFontFamily = FontFamily(
     Font(R.font.aliviaregular, FontWeight.Normal)
 )
 
 @Composable
-fun Comments() {
+fun Comments(/*nombre: String*/) {
     val comments = listOf(
         "Excelente café, me encantó el aroma y sabor.",
         "Muy buen servicio y ambiente agradable.",
@@ -72,9 +75,12 @@ fun Comments() {
         "Volveré sin duda alguna."
     )
 
+    val grisState = rememberLazyStaggeredGridState()
+    val scope = rememberCoroutineScope()
+
     Column() {
         Text(
-            text = "Nombre cafe",
+            text = "nombre",
             modifier = Modifier.fillMaxWidth().padding(vertical = 15.dp),
             textAlign = TextAlign.Center,
             fontFamily = courgetteFontFamily,
@@ -104,6 +110,8 @@ fun Comments() {
             }
         }
     }
+
+    //scope.launch { grisState.scrollToItem(0) }
 }
 
 @Preview(showBackground = true)

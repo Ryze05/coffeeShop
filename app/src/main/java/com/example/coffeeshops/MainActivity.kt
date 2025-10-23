@@ -58,9 +58,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.coffeeshops.ui.theme.CoffeeShopsTheme
 import kotlin.math.floor
 
@@ -69,6 +71,16 @@ val courgetteFontFamily = FontFamily(
 )
 
 data class CoffeeShop(val nombre: String, val direccion: String, @DrawableRes var photo: Int)
+
+val coffeeShops = listOf(
+    CoffeeShop("Antico Caffè Greco", "St. Italy, Rome", R.drawable.images),
+    CoffeeShop("Coffee Room", "St. Germany, Berlin", R.drawable.images1),
+    CoffeeShop("Coffee Ibiza", "St. Colon, Madrid", R.drawable.images2),
+    CoffeeShop("Pudding Coffee Shop", "St. Diagonal, Barcelona", R.drawable.images3),
+    CoffeeShop("L'Express", "St. Picadilly Circus, London", R.drawable.images4),
+    CoffeeShop("Coffee Corner", "St. Àngel Guimerà, Valencia", R.drawable.images5),
+    CoffeeShop("Sweet Cup", "St. Kinkerstraat, Amsterdam", R.drawable.images6)
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,7 +96,11 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable("Main") { CoffeeMain(navController) }
-                        composable("Comments") { Comments() }
+                        //composable("Comments") { Comments() }
+                        composable("Comments/{nombre}") { backStackEntry ->
+                            val nombre = backStackEntry.arguments?.getString("nombre")?:""
+                            Comments(nombre = nombre)
+                        }
                     }
                 }
             }
@@ -95,17 +111,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CoffeeMain(navController: NavController) {
     var starsSelected by remember { mutableStateOf(0.0) }
-
-    val coffeeShops = listOf(
-        CoffeeShop("Antico Caffè Greco", "St. Italy, Rome", R.drawable.images),
-        CoffeeShop("Coffee Room", "St. Germany, Berlin", R.drawable.images1),
-        CoffeeShop("Coffee Ibiza", "St. Colon, Madrid", R.drawable.images2),
-        CoffeeShop("Pudding Coffee Shop", "St. Diagonal, Barcelona", R.drawable.images3),
-        CoffeeShop("L'Express", "St. Picadilly Circus, London", R.drawable.images4),
-        CoffeeShop("Coffee Corner", "St. Àngel Guimerà, Valencia", R.drawable.images5),
-        CoffeeShop("Sweet Cup", "St. Kinkerstraat, Amsterdam", R.drawable.images6)
-    )
-
 
     LazyColumn(
         modifier = Modifier
@@ -120,7 +125,7 @@ fun CoffeeMain(navController: NavController) {
                 ),
                 modifier = Modifier
                     .clickable{
-                        navController.navigate("Comments")
+                        navController.navigate("Comments/${shop.nombre}")
                     }
             ) {
                 Column {
