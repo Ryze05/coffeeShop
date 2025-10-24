@@ -138,7 +138,11 @@ fun Comments(nombre: String) {
 
         if (visible) {
             Button(
-                onClick = {},
+                onClick = {
+                    scope.launch {
+                        grisState.scrollToItem(0)
+                    }
+                },
                 modifier = Modifier
                     .padding(16.dp)
                     .align(Alignment.BottomCenter),
