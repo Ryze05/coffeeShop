@@ -2,20 +2,30 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +41,7 @@ val courgetteFontFamily = FontFamily(
 )
 
 @Composable
-fun Comments(/*nombre: String*/) {
+fun Comments(nombre: String) {
     val comments = listOf(
         "Excelente café, me encantó el aroma y sabor.",
         "Muy buen servicio y ambiente agradable.",
@@ -78,46 +88,76 @@ fun Comments(/*nombre: String*/) {
     val grisState = rememberLazyStaggeredGridState()
     val scope = rememberCoroutineScope()
 
-    Column() {
-        Text(
-            text = "nombre",
-            modifier = Modifier.fillMaxWidth().padding(vertical = 15.dp),
-            textAlign = TextAlign.Center,
-            fontFamily = courgetteFontFamily,
-            fontSize = 30.sp
+    var visible by remember { mutableStateOf(false) }
 
-        )
+    LaunchedEffect(grisState.firstVisibleItemIndex, grisState.firstVisibleItemScrollOffset) {
+        val firstVisibleItemIndex = grisState.firstVisibleItemIndex
+        val firstVisibleItemScrollOffset = grisState.firstVisibleItemScrollOffset
 
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(2),
-            modifier = Modifier.padding(8.dp),
-            contentPadding = PaddingValues(8.dp),
-            verticalItemSpacing = 8.dp,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(comments.size) { index ->
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFfbe3e3),
-                    )
-                ) {
-                    Text(
-                        text = comments[index],
-                        modifier = Modifier.padding(12.dp),
-                        textAlign = TextAlign.Start
-                    )
-                }
-            }
+        if (firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0) {
+            visible = true
+        } else {
+            visible = false
         }
     }
 
-    //scope.launch { grisState.scrollToItem(0) }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = nombre,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 15.dp),
+                textAlign = TextAlign.Center,
+                fontFamily = courgetteFontFamily,
+                fontSize = 30.sp
+
+            )
+
+            LazyVerticalStaggeredGrid(
+                state = grisState,
+                columns = StaggeredGridCells.Fixed(2),
+                modifier = Modifier.padding(8.dp).weight(1f),
+                contentPadding = PaddingValues(8.dp),
+                verticalItemSpacing = 8.dp,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(comments.size) { index ->
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFfbe3e3),
+                        )
+                    ) {
+                        Text(
+                            text = comments[index],
+                            modifier = Modifier.padding(12.dp),
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                }
+            }
+        }
+
+        if (visible) {
+            Button(
+                onClick = {},
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.BottomCenter),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFf99aaa),
+                    contentColor = Color.White
+                )
+            ) {
+                Text("Add new comment")
+            }
+        }
+
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     CoffeeShopsTheme {
-        Comments()
+        Comments(nombre = "dd")
     }
 }
