@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,12 +24,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -211,6 +216,11 @@ fun RatingBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar() {
+    var expanded by remember { mutableStateOf(false) } // Estado para controlar la expansión del menú
+    var option by remember { mutableStateOf("") }
+
+    //val options = listOf<String>("Compartir", "Album")
+
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color(0xFFf99aaa),
@@ -229,16 +239,41 @@ fun TopBar() {
             }
         },
         actions = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = { expanded = !expanded }) {
                 Icon(
                     imageVector = Icons.Filled.MoreVert,
                     contentDescription = "More options",
                     tint = Color.White
                 )
             }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .background(Color(0xFFfbe3e3))
+            ) {
+                    DropdownMenuItem(
+                        onClick = {
+                            option = "Compartir"
+                            expanded = false
+                        },
+                        leadingIcon = { Icon(Icons.Filled.Share, contentDescription = null) },
+                        text = { Text("Compartir") }
+                    )
+                DropdownMenuItem(
+                    onClick = {
+                        option = "Album"
+                        expanded = false
+                    },
+                    leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
+                    text = { Text("Album") }
+                )
+            }
         }
     )
 }
+
 
 /*@Preview(showBackground = true)
 @Composable
