@@ -109,7 +109,7 @@ fun CoffeeMain(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(14.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp) // Espacio entre items
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(coffeeShops) { shop ->
             Card(
@@ -204,7 +204,7 @@ fun RatingBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar() {
-    var expanded by remember { mutableStateOf(false) } // Estado para controlar la expansión del menú
+    var expanded by remember { mutableStateOf(false) }
     var option by remember { mutableStateOf("") }
 
     //val options = listOf<String>("Compartir", "Album")

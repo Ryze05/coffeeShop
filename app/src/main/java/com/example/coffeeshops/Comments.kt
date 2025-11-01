@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,7 +36,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,9 +46,9 @@ import com.example.coffeeshops.courgetteFontFamily
 import com.example.coffeeshops.ui.theme.CoffeeShopsTheme
 import kotlinx.coroutines.launch
 
-val courgetteFontFamily = FontFamily(
+/*val courgetteFontFamily = FontFamily(
     Font(R.font.aliviaregular, FontWeight.Normal)
-)
+)*/
 
 @Composable
 fun Comments(nombre: String) {
