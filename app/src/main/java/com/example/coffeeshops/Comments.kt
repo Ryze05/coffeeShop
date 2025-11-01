@@ -34,14 +34,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.coffeeshops.R
 import com.example.coffeeshops.courgetteFontFamily
 import com.example.coffeeshops.ui.theme.CoffeeShopsTheme
 import kotlinx.coroutines.launch
@@ -99,7 +95,9 @@ fun Comments(nombre: String) {
     val scope = rememberCoroutineScope()
 
     var visible by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf(TextFieldState()) }
+    var textState by remember { mutableStateOf(TextFieldState()) }
+    
+    var filterComments by remember { mutableStateOf(comments) }
 
     LaunchedEffect(grisState.firstVisibleItemIndex, grisState.firstVisibleItemScrollOffset) {
         val firstVisibleItemIndex = grisState.firstVisibleItemIndex
@@ -122,7 +120,13 @@ fun Comments(nombre: String) {
                 fontSize = 30.sp
             )
 
-            SimpleSearchBar(text, onSearch = {text -> /**/}, comments )
+            SimpleSearchBar(textState, onSearch = { text ->
+                if (text.isBlank()) {
+                    filterComments = comments
+                } else {
+                    filterComments = comments.filter { it.contains(text, ignoreCase = true) }
+                }
+            }, filterComments )
 
             LazyVerticalStaggeredGrid(
                 state = grisState,
@@ -132,7 +136,7 @@ fun Comments(nombre: String) {
                 verticalItemSpacing = 8.dp,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(comments.size) { index ->
+                items(filterComments.size) { index ->
                     Card(
                         colors = CardDefaults.cardColors(
                             containerColor = Color(0xFFfbe3e3),
@@ -178,9 +182,7 @@ fun SimpleSearchBar(
     searchResults: List<String>,
     modifier: Modifier = Modifier
 ) {
-    // Controls expansion state of the search bar
     var expanded by rememberSaveable { mutableStateOf(false) }
-
     Box(
         modifier
             .semantics { var isTraversalGroup = true }
@@ -205,7 +207,6 @@ fun SimpleSearchBar(
             expanded = expanded,
             onExpandedChange = { expanded = it },
         ) {
-            // Display search results in a scrollable column
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 searchResults.forEach { result ->
                     ListItem(
